@@ -1,7 +1,7 @@
 # Medical Image Prioritization System
 
 ![Medical Image Prioritization System Dashboard](IntegrationImages/medical_image_prioritization_system.png)
-
+Note: This frontend was just used for visualization purposes of the solution, this engine can be integrated with any client/server applications.
 ## Problem Overview
 Radiologists often work through a large queue of imaging studies without initial indication of criticality. As a result:
 - Life-threatening conditions may experience reporting delays.
@@ -44,4 +44,6 @@ Final Prediction & Heat Map using GradCam
 ### Pneumothorax
 ![Picture 6](IntegrationImages/Picture6.png)
 
-
+## Collaborators
+- Vinay Bhutange (https://github.com/VinayBhutange)
+- Vishal Pandey (https://github.com/Victorpapa01)
