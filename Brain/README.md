@@ -157,13 +157,13 @@ weighted avg       0.98      0.98      0.98      1311
 
 The confusion matrix provides a visual breakdown of the model's performance across all classes.
 
-![Confusion Matrix](Results\confusion_matrix.png)
+![Confusion Matrix](Results/confusion_matrix.png)
 
 ### Grad-CAM Predictions
 
 The following image shows the model's predictions on sample images, sorted by priority. The heatmaps clearly indicate that the model is focusing on the relevant tumor regions.
 
-![Grad-CAM Predictions](Results\3_gradcam_predictions_sorted.png)
+![Grad-CAM Predictions](Results/3_gradcam_predictions_sorted.png)
 
 ---
 
