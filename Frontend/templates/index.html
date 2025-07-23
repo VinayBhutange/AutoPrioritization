@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radiologist Worklist Prioritization System</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        urgent: '#ef4444', // red-500
+                        high: '#f59e0b',   // amber-500
+                        normal: '#10b981', // emerald-500
+                    },
+                    animation: {
+                        'slide-up': 'slideUp 1s ease-in-out',
+                        'slide-down': 'slideDown 1s ease-in-out',
+                        'highlight': 'highlight 2s ease-in-out',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        slideDown: {
+                            '0%': { transform: 'translateY(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        highlight: {
+                            '0%': { backgroundColor: 'rgba(219, 234, 254, 0)' },
+                            '50%': { backgroundColor: 'rgba(219, 234, 254, 1)' }, // blue-100
+                            '100%': { backgroundColor: 'rgba(219, 234, 254, 0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Custom styles -->
+    <style>
+        .priority-urgent {
+            border-left: 4px solid #ef4444; /* red-500 */
+        }
+        .priority-high {
+            border-left: 4px solid #f59e0b; /* amber-500 */
+        }
+        .priority-normal {
+            border-left: 4px solid #10b981; /* emerald-500 */
+        }
+        .priority-unknown {
+            border-left: 4px solid #6b7280; /* gray-500 */
+        }
+        .priority-badge-urgent {
+            background-color: #ef4444; /* red-500 */
+        }
+        .priority-badge-high {
+            background-color: #f59e0b; /* amber-500 */
+        }
+        .priority-badge-normal {
+            background-color: #10b981; /* emerald-500 */
+        }
+        .priority-badge-unknown {
+            background-color: #6b7280; /* gray-500 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-10">
+        <header class="mb-10 text-center sm:text-left">
+            <h1 class="page-title text-4xl font-extrabold mb-2">Radiologist Worklist Prioritization System</h1>
+            <p class="text-gray-600 text-lg max-w-2xl">Advanced AI analysis for medical image prioritization with dynamic visualization</p>
+            <div class="mt-3 w-20 h-1 bg-gradient-to-r from-blue-500 to-blue-300 rounded-full hidden sm:block"></div>
+        </header>
+
+        <div class="card p-6 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="section-title text-2xl font-semibold text-gray-800">Image Dashboard</h2>
+                <div class="flex">
+                    <!-- Hidden refresh button but still functional if needed -->
+                    <button id="refreshBtn" class="hidden action-button bg-blue-500 text-white px-5 py-2 rounded-md font-medium text-sm">
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Refresh Images
+                        </div>
+                    </button>
+                    <button id="analyzeBtn" class="action-button bg-green-500 text-white px-6 py-2.5 rounded-md font-medium text-sm shadow-lg hover:shadow-xl transition-all duration-300">
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                            Analyze & Sort
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading state -->
+            <div id="loadingState" class="hidden py-20 flex flex-col items-center justify-center">
+                <div class="loading-spinner animate-spin rounded-full h-14 w-14 border-t-2 border-b-2 border-blue-500 mb-5"></div>
+                <p class="text-gray-600 font-medium">Loading images and analyzing priority...</p>
+                <p class="text-gray-500 text-sm mt-2">Please wait while AI processes your medical images</p>
+            </div>
+
+            <!-- Error state -->
+            <div id="errorState" class="hidden py-20 flex flex-col items-center justify-center">
+                <div class="text-red-500 text-5xl mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <p id="errorMessage" class="text-gray-600 text-center">An error occurred while loading images.</p>
+            </div>
+
+            <!-- Empty state -->
+            <div id="emptyState" class="hidden py-20 flex flex-col items-center justify-center">
+                <div class="text-gray-400 text-5xl mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <p class="text-gray-600">No images found in the specified directory.</p>
+            </div>
+
+            <!-- Images list -->
+            <div id="imagesList" class="hidden transition-all duration-500">
+                <!-- Priority legend -->
+                <div class="flex flex-wrap gap-3 mb-5 pb-3 border-b border-gray-200 items-center">
+                    <span class="text-sm font-medium text-gray-600 mr-2">Priority:</span>
+                    <span class="flex items-center">
+                        <span class="inline-block w-3 h-3 rounded-full bg-urgent mr-1.5 shadow-sm"></span>
+                        <span class="text-sm">Urgent</span>
+                    </span>
+                    <span class="flex items-center">
+                        <span class="inline-block w-3 h-3 rounded-full bg-high mr-1.5 shadow-sm"></span>
+                        <span class="text-sm">High</span>
+                    </span>
+                    <span class="flex items-center">
+                        <span class="inline-block w-3 h-3 rounded-full bg-normal mr-1.5 shadow-sm"></span>
+                        <span class="text-sm">Normal</span>
+                    </span>
+                </div>
+
+                <!-- Images grid -->
+                <div id="imagesContainer" class="grid gap-5">
+                    <!-- Images will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend for priority colors -->
+        <div class="card p-6 mb-8">
+            <h2 class="section-title text-lg font-semibold text-gray-800 mb-5">Priority Levels</h2>
+            <div class="flex flex-col space-y-3">
+                <div class="flex items-center">
+                    <div class="w-6 h-6 rounded-full bg-urgent mr-3 shadow"></div>
+                    <span class="font-medium">Urgent</span>
+                    <span class="ml-2 text-gray-600">- Requires immediate attention</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-6 h-6 rounded-full bg-high mr-3 shadow"></div>
+                    <span class="font-medium">High</span>
+                    <span class="ml-2 text-gray-600">- Requires prompt review</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-6 h-6 rounded-full bg-normal mr-3 shadow"></div>
+                    <span class="font-medium">Normal</span>
+                    <span class="ml-2 text-gray-600">- Routine priority</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template for image card -->
+    <template id="imageCardTemplate">
+        <div class="image-card bg-white rounded-lg shadow-md overflow-hidden transition-all duration-500 opacity-100 transform scale-100 hover:shadow-xl">
+            <div class="flex items-center p-4">
+                <div class="image-thumbnail-container flex-shrink-0 w-24 h-24 bg-gray-200 rounded-lg overflow-hidden mr-5">
+                    <img class="image-thumbnail w-full h-full object-cover" src="" alt="">
+                </div>
+                <div class="flex-grow">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="image-name text-lg font-semibold text-gray-900 mb-1.5"></h3>
+                        </div>
+                        <span class="priority-badge px-2 py-1 rounded text-xs font-bold text-white"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <p class="text-sm text-gray-600">Prediction:</p>
+                            <p class="image-prediction font-medium"></p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Confidence:</p>
+                            <p class="image-confidence font-medium"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
