@@ -79,7 +79,7 @@ The evaluation script (`evaluate_efficientnet.py`) produces a plot showing the t
 
 To understand the model's decision-making process, we use Grad-CAM to generate heatmaps that highlight the areas of the image the model focused on for its prediction. The `predict_efficientnet.py` script generates a sorted plot of images and their corresponding heatmaps.
 
-![Grad-CAM Results](plots/gradcam_result.jpg)
+![Grad-CAM Results](Plots/gradcam_result.jpg)
 
 ## API Usage
 
