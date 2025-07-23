@@ -1,0 +1,14 @@
+# Pneumothorax Detection Project Dependencies
+keras
+tensorflow
+numpy
+scikit-learn
+albumentations
+pandas
+tqdm
+opencv-python
+pydicom
+pylibjpeg
+pylibjpeg-libjpeg
+Pillow
+matplotlib
