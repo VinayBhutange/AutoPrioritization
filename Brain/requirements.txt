@@ -1,0 +1,14 @@
+Flask
+tensorflow
+numpy
+Pillow
+tensorflow
+numpy
+scikit-learn
+albumentations
+pandas
+tqdm
+opencv-python
+pydicom
+Pillow
+seaborn
