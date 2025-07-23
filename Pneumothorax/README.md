@@ -83,7 +83,7 @@ To understand the model's decision-making process, we use Grad-CAM to generate h
 
 ## API Usage
 
-The model can also be accessed via a REST API. The `app.py` script launches a Flask server with a `/predict` endpoint that accepts POST requests containing a chest X-ray image.
+The model can also be accessed via a REST API. The `app.py` script launches a Flask server with a `/Chest/predict` endpoint that accepts POST requests containing a chest X-ray image.
 
 ### How to Run the API
 
