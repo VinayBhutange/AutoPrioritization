@@ -104,6 +104,31 @@ Run the prediction script to see prioritized Grad-CAM visualizations for sample 
 python predict_efficientnet.py
 ```
 
+### Step 6: Run the Prediction API
+
+To serve the model via a web API, run the Flask application.
+
+```bash
+python app.py
+```
+
+- The API will be available at `http://localhost:5001`.
+- You can send a `POST` request with an image file to the `/Brain/predict` endpoint to get a JSON response.
+
+**Example cURL Request:**
+```bash
+curl -X POST -F "file=@/path/to/your/image.jpg" http://localhost:5001/Brain/predict
+```
+
+**Example API Response:**
+```json
+{
+    "confidence": 99.99910593032837,
+    "prediction": "Pituitary",
+    "priority": "Urgent"
+}
+```
+
 ## 5. Results
 
 This section should be filled in after running the evaluation and prediction scripts.
@@ -132,10 +157,18 @@ weighted avg       0.98      0.98      0.98      1311
 
 The confusion matrix provides a visual breakdown of the model's performance across all classes.
 
-![Confusion Matrix](confusion_matrix.png)
+![Confusion Matrix](Results\confusion_matrix.png)
 
 ### Grad-CAM Predictions
 
 The following image shows the model's predictions on sample images, sorted by priority. The heatmaps clearly indicate that the model is focusing on the relevant tumor regions.
 
-![Grad-CAM Predictions](gradcam_predictions_sorted.png)
+![Grad-CAM Predictions](Results\3_gradcam_predictions_sorted.png)
+
+---
+
+## 6. Disclaimer
+
+**For Educational Purposes Only.**
+
+This project is a demonstration of deep learning techniques for image classification and is not intended for real-world medical diagnosis. The predictions made by this model should not be used for any clinical decisions.
